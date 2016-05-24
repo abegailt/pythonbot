@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 from __future__ import unicode_literals
-import requests
+import requests, json, certifi, pycurl, time
 from requests_oauthlib import OAuth1
 from urllib.parse import parse_qs
 
@@ -13,7 +13,6 @@ CONSUMER_SECRET = "wzFARcKEOrW36rzpWQHQ7FQV2JumkUW8vGav9wrYPcfdT656Ws"
 
 OAUTH_TOKEN = "761329334-qN7iJoAqsIkyI6r4BY1Fy6d45faM4MgusV5Qfmpe"
 OAUTH_TOKEN_SECRET = "kUikBUuGQOrxYrv3WU3tAVwVB5CtYEIihIkTXOU4xErwm"
-
 
 def setup_oauth():
     """Authorize your app via identifier."""
@@ -78,8 +77,24 @@ if __name__ == "__main__":
         oauth = get_oauth()
 
         r = requests.get(url="https://api.twitter.com/1.1/trends/place.json?id=1&count=10", auth=oauth)
-        
+
+        #ctime = time.ctime()
+        #print ("Top 10 Twitter Trends as of %s" % ctime)
+
+        trending_topic = " "
         count = 0
+
         while count < 10:
             print (r.json()[0]["trends"][count]["name"])
+            trending_topic = trending_topic + (r.json()[0]["trends"][count]["name"]) + '\n'
             count += 1
+
+        jresult = json.dumps({"text":str(trending_topic)})
+        pc = pycurl.Curl()
+        webhook_url = 'https://hooks.slack.com/services/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'
+
+        pc.setopt(pycurl.CAINFO, certifi.where())
+        pc.setopt(pycurl.URL, webhook_url)
+        pc.setopt(pycurl.POST, 1)
+        pc.setopt(pycurl.POSTFIELDS, jresult)
+        pc.perform()
