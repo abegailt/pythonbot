@@ -2,7 +2,8 @@
 from __future__ import unicode_literals
 import requests, json, certifi, pycurl, time
 from requests_oauthlib import OAuth1
-from urllib.parse import parse_qs
+from urlparse import parse_qs
+from slackclient import SlackClient
 
 REQUEST_TOKEN_URL = "https://api.twitter.com/oauth/request_token"
 AUTHORIZE_URL = "https://api.twitter.com/oauth/authorize?oauth_token="
@@ -85,11 +86,11 @@ if __name__ == "__main__":
         count = 0
 
         while count < 10:
-            print (r.json()[0]["trends"][count]["name"])
+            #print (r.json()[0]["trends"][count]["name"])
             trending_topic = trending_topic + (r.json()[0]["trends"][count]["name"]) + '\n'
             count += 1
 
-        jresult = json.dumps({"text":str(trending_topic)})
+        """jresult = json.dumps({"text":str(trending_topic)})
         pc = pycurl.Curl()
         webhook_url = 'https://hooks.slack.com/services/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'
 
@@ -97,4 +98,8 @@ if __name__ == "__main__":
         pc.setopt(pycurl.URL, webhook_url)
         pc.setopt(pycurl.POST, 1)
         pc.setopt(pycurl.POSTFIELDS, jresult)
-        pc.perform()
+        pc.perform()"""
+
+        token = "xoxb-45499686515-z8IfeXJMC9u2kCpr5Z0t3TEs"
+        client = SlackClient(token)
+        client.api_call("chat.postMessage",as_user="true",channel="general",text=trending_topic)
