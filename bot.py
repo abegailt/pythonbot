@@ -100,6 +100,6 @@ if __name__ == "__main__":
         pc.setopt(pycurl.POSTFIELDS, jresult)
         pc.perform()"""
 
-        token = "xoxb-45499686515-z8IfeXJMC9u2kCpr5Z0t3TEs"
+        token = "xoxb-45499686515-ktK6vcbBubba6kTlQMIemCKX"
         client = SlackClient(token)
         client.api_call("chat.postMessage",as_user="true",channel="general",text=trending_topic)
